@@ -3,7 +3,7 @@ import {StyleSheet, View, Text, Dimensions, TouchableOpacity} from 'react-native
 import BurgerMenu from './BurgerMenu';
 import Cart from './Cart';
 
-const Header = ({ title, qty, handleToggleMenu, isVisible}) => {
+const HeaderSimple = ({ title, handleToggleMenu, isVisible}) => {
     return (
         <View style={styles.container}>
             <View style={styles.leftSection}>
@@ -11,7 +11,6 @@ const Header = ({ title, qty, handleToggleMenu, isVisible}) => {
             </View>
             <Text style={styles.title}>{title}</Text>
             <View style={styles.leftSection}>
-                <Cart qty={qty} />
             </View>
         </View>
     );
@@ -33,10 +32,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     title: {
-        marginLeft: -15,
+        marginLeft: -40,
         fontWeight: 'bold',
         fontSize: 18,
     },
 });
 
-export default Header;
+export default HeaderSimple;

@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Animated, TouchableOpacity } from 'react-native';
+import {StyleSheet, View, Animated, TouchableOpacity, Dimensions} from 'react-native';
 
-const BurgerMenu = () => {
+const BurgerMenu = ({ handleToggleMenu, menuShown }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [animation] = useState(new Animated.Value(0));
 
     const handleToggle = () => {
-        setIsOpen(!isOpen);
-        Animated.timing(animation, {
-            toValue: isOpen ? 0 : 1,
-            duration: 300,
-            useNativeDriver: false,
-        }).start();
+        handleToggleMenu();
+        // setIsOpen(true);
+        // Animated.timing(animation, {
+        //     toValue: isOpen ? 0 : 1,
+        //     duration: 300,
+        //     useNativeDriver: false,
+        // }).start();
     };
 
     const topLineTranslate = animation.interpolate({

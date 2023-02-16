@@ -2,10 +2,10 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
-const Cart = ({ qty }) => {
+const Cart = ({ navigation, qty }) => {
     return (
         <View style={styles.container}>
-            <Feather name="shopping-cart" size={24} color="black" />
+            <Feather onPress={() => navigation.replace("Cart")} name="shopping-cart" size={24} color="black" />
             {qty > 0 && <View style={styles.badge}><Text style={styles.badgeText}>{qty}</Text></View>}
         </View>
     );

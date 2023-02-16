@@ -1,6 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, FlatList, TouchableWithoutFeedback } from 'react-native';
+import {
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+    Image,
+    FlatList,
+    TouchableWithoutFeedback,
+    Dimensions
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
+
+const screenHeight = Dimensions.get('window').height;
 
 const SearchBar = () => {
     const [text, setText] = useState('');
@@ -161,7 +174,7 @@ const SearchBar = () => {
                     ))}
                 </ScrollView>
             )}
-            <ScrollView style={{height: 600}}>
+            <ScrollView style={{height: screenHeight - 205}}>
                 {renderProducts()}
             </ScrollView>
         </View>
