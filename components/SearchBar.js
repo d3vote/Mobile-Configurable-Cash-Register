@@ -1,18 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {Feather} from '@expo/vector-icons';
+import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 const SearchBar = () => {
     const [text, setText] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [categories, setCategories] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [sortedProducts, setSortedProducts] = useState([]);
 
     async function getCategoriesFromUrl(url) {
         try {
             const response = await fetch(url);
             const text = await response.text();
             const fetchedCategories = text.split('\n').map(category => category.trim()).filter(category => category !== '');
-            console.log(fetchedCategories)
             setCategories(fetchedCategories);
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -20,17 +21,105 @@ const SearchBar = () => {
         }
     }
 
+    const getProductsFromUrl = async (url) => {
+        try {
+            const response = await fetch(url);
+            const json = await response.json();
+            setProducts(json);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            setProducts([]);
+        }
+    };
+
     useEffect(() => {
         getCategoriesFromUrl('https://raw.githubusercontent.com/d3vote/ConfigFiles/main/categories.txt');
+        getProductsFromUrl('https://raw.githubusercontent.com/d3vote/ConfigFiles/main/productsList.json');
     }, []);
+
+    useEffect(() => {
+        const filteredProducts = products.filter((product) => {
+            const categoryMatch =
+                selectedCategory ? product.category === selectedCategory : true;
+            const textMatch = product.productTitle
+                .toLowerCase()
+                .includes(text.toLowerCase());
+            return categoryMatch && textMatch;
+        });
+
+        // Sort the filtered products by category
+        const sortedByCategory = filteredProducts.sort((a, b) =>
+            b.category.localeCompare(a.category)
+        );
+        setSortedProducts(sortedByCategory);
+    }, [selectedCategory, products, text]);
 
     const handleClear = () => {
         setText('');
     };
 
     const handleCategorySelect = (category) => {
-        setSelectedCategory(category);
+        setSelectedCategory((prevSelectedCategory) => {
+            if (prevSelectedCategory === category) {
+                return '';
+            }
+            return category;
+        });
     };
+
+    const renderProducts = () => {
+        const filteredProducts = products.filter((product) => {
+            const categoryMatch = selectedCategory ? product.category === selectedCategory : true;
+            const textMatch = product.productTitle.toLowerCase().includes(text.toLowerCase());
+            return categoryMatch && textMatch;
+        });
+
+        const rows = [];
+        let cells = [];
+
+        sortedProducts.forEach((product, index) => {
+            cells.push(
+                    <View key={index} style={styles.productContainer}>
+                        <TouchableOpacity activeOpacity={0.7}>
+                            <Image style={styles.productImage} source={{ uri: product.productImageUrl }} />
+                        </TouchableOpacity>
+                        <View style={[styles.productDetails,{flex: 1}]}>
+                            <Text style={styles.productTitle}>{product.productTitle}</Text>
+                            <View style={[styles.productPriceContainer, {flex: 1}]}>
+                                <View style={styles.productPriceContainer2}>
+                                    <Text style={styles.productPrice}>{product.productPrice}</Text>
+                                    <Text style={styles.productCurrency}>€</Text>
+                                </View>
+                                <View style={styles.productButtonWrapper}>
+                                    <TouchableOpacity activeOpacity={0.7}>
+                                        <Text style={styles.productButton}>+</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+            );
+            if (index % 2 === 1) {
+                rows.push(
+                    <View key={index} style={styles.productsRow}>
+                        {cells}
+                    </View>
+                );
+                cells = [];
+            }
+        });
+
+        if (cells.length > 0) {
+            rows.push(
+                <View key={filteredProducts.length} style={styles.productsRow}>
+                    {cells}
+                </View>
+            );
+        }
+
+        return rows;
+    };
+
 
     return (
         <View>
@@ -44,16 +133,13 @@ const SearchBar = () => {
                     onChangeText={setText}
                 />
                 {Boolean(text) && (
-                    <TouchableOpacity
-                        onPress={handleClear}
-                        activeOpacity={0.5}
-                    >
+                    <TouchableOpacity onPress={handleClear} activeOpacity={0.5}>
                         <Feather name="x" size={24} color="#ccc" />
                     </TouchableOpacity>
                 )}
             </View>
             {categories.length > 0 && (
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginBottom: 10}}>
                     {categories.map((category) => (
                         <TouchableOpacity
                             key={category}
@@ -63,13 +149,21 @@ const SearchBar = () => {
                                 selectedCategory === category && styles.selectedCategoryButton,
                             ]}
                         >
-                            <Text style={[styles.categoryButtonText, selectedCategory === category && styles.selectedCategoryButtonText]}>
+                            <Text
+                                style={[
+                                    styles.categoryButtonText,
+                                    selectedCategory === category && styles.selectedCategoryButtonText,
+                                ]}
+                            >
                                 {category}
                             </Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
             )}
+            <ScrollView style={{height: 600}}>
+                {renderProducts()}
+            </ScrollView>
         </View>
     );
 };
@@ -116,6 +210,80 @@ const styles = StyleSheet.create({
     },
     selectedCategoryButtonText: {
         fontWeight: 'bold',
+    },
+    productListContainer: {
+        paddingHorizontal: 20,
+        paddingTop: 20,
+    },
+    productContainer: {
+        flex: 1,
+        borderRadius: 16,
+        width: 180,
+        backgroundColor: '#fff',
+        shadowColor: 'black',
+        shadowOpacity: 0.2,
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowRadius: 10,
+        elevation: 3,
+        overflow: 'hidden',
+        marginRight: 8,
+    },
+    productImage: {
+        height: 150,
+        width: '100%',
+    },
+    productDetails: {
+        padding: 10,
+    },
+    productTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 5,
+        color: '#333',
+    },
+    productPriceContainer: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyItems: 'flex-end'
+    },
+    productPriceContainer2: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyItems: 'flex-end'
+    },
+    productPrice: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'black',
+    },
+    productCurrency: {
+        marginLeft: 3,
+        marginTop: 1.3,
+        fontSize: 16,
+        color: '#333',
+    },
+    productsRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+    productButtonWrapper: {
+        width: 34,
+        backgroundColor: 'black',
+        height: 34,
+        borderRadius: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    productButton: {
+        color: '#fff',
+        fontSize: 18,
+        marginTop: -2,
     },
 });
 

@@ -3,7 +3,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import BurgerMenu from './BurgerMenu';
 import Cart from './Cart';
 
-const Header = ({ title }) => {
+const Header = ({ title, qty }) => {
     return (
         <View style={styles.container}>
             <View style={styles.leftSection}>
@@ -11,7 +11,7 @@ const Header = ({ title }) => {
             </View>
             <Text style={styles.title}>{title}</Text>
             <View style={styles.leftSection}>
-                <Cart qty={5} />
+                <Cart qty={qty} />
             </View>
         </View>
     );
