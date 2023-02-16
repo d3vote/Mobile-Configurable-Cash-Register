@@ -55,13 +55,13 @@ const BurgerMenu = () => {
 
 const styles = StyleSheet.create({
     container: {
-        width: 45,
-        height: 45,
+        width: 36,
+        height: 36,
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'left',
     },
     line: {
-        width: 35,
+        width: 36,
         height: 3,
         backgroundColor: 'black',
         marginVertical: 3,

@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingRight: 20,
+        paddingHorizontal: 16,
         paddingVertical: 8,
         backgroundColor: '#fff',
         elevation: 2,
@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     title: {
+        marginLeft: -15,
         fontWeight: 'bold',
         fontSize: 18,
     },

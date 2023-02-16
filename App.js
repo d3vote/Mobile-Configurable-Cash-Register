@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import {SafeAreaView, useColorScheme, Animated, Image } from 'react-native';
+import {SafeAreaView, useColorScheme, Animated, StyleSheet } from 'react-native';
 import React, {useEffect} from 'react';
 import HomeScreen from "./screens/HomeScreen";
 
@@ -32,7 +32,7 @@ export default function App() {
     return (
         <Animated.View style={{ opacity: fadeAnim }}>
             <SafeAreaView>
-                <StatusBar style={StatusBarColor}/>
+                <StatusBar style={[StatusBarColor]}/>
                 <HomeScreen />
             </SafeAreaView>
         </Animated.View>

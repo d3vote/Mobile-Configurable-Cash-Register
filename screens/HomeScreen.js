@@ -5,8 +5,8 @@ import SearchBar from "../components/SearchBar";
 
 const HomeScreen = () => {
     return (
-        <View style={{ marginLeft: 8, marginTop: 8 }}>
-            <Header title={"Products"} qty={3}/>
+        <View style={{ marginLeft: 0, marginTop: 8 }}>
+            <Header title={"Produkte"} qty={3}/>
             <SearchBar/>
         </View>
     )
